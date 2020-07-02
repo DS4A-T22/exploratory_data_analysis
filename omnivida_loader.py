@@ -30,7 +30,6 @@ def get_basic_info_dataset():
                                                     'SECUNDARIA', 'TECNICO', 'TECNOLOGO', 'UNIVERSITARIO', \
                                                     'POSGRADO'], ordered=True, inplace=True)
     basic_info['estado_civil'] = basic_info['estado_civil'].astype('category')
-    basic_info['orientacion_sexual'] = basic_info['orientacion_sexual'].astype('category')
     basic_info['zona'] = basic_info['zona'].astype('category')
     basic_info['nivel_socioeconomico'] = basic_info['nivel_socioeconomico'].astype('category')
     basic_info['nivel_socioeconomico'].cat.reorder_categories(['NIVEL 0 DEL SISBEN', 'NIVEL 1 DEL SISBEN', \
