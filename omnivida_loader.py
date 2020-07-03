@@ -60,7 +60,39 @@ def get_wellbeing_index_dataset():
 def get_adherence_dataset():
     adherence = pd.read_csv(ADHERENCE)
     adherence['fe_entrevista'] = pd.to_datetime(adherence['fe_entrevista'])
-    return adherence
+    adherence.loc[adherence['cuantitativo_ponderado']=='<30%', 'cuantitativo_ponderado'] = 0
+    adherence.loc[adherence['cuantitativo_ponderado']=='30-65%', 'cuantitativo_ponderado'] = 1
+    adherence.loc[adherence['cuantitativo_ponderado']=='64-84%', 'cuantitativo_ponderado'] = 2
+    adherence.loc[adherence['cuantitativo_ponderado']=='85-94%', 'cuantitativo_ponderado'] = 3
+    adherence.loc[adherence['cuantitativo_ponderado']=='95-100%', 'cuantitativo_ponderado'] = 4
+    adherence.loc[adherence['smaq2']=='<30%', 'smaq2'] = 0
+    adherence.loc[adherence['smaq2']=='30-65%', 'smaq2'] = 1
+    adherence.loc[adherence['smaq2']=='64-84%', 'smaq2'] = 2
+    adherence.loc[adherence['smaq2']=='85-94%', 'smaq2'] = 3
+    adherence.loc[adherence['smaq2']=='95-100%', 'smaq2'] = 4
+    adherence.loc[adherence['morisky_green']=='si', 'morisky_green'] = 1
+    adherence.loc[adherence['morisky_green']=='no', 'morisky_green'] = 0
+    adherence.loc[adherence['smaq1']=='si', 'smaq1'] = 1
+    adherence.loc[adherence['smaq1']=='no', 'smaq1'] = 0
+    adherence.loc[adherence['espa']=='si', 'espa'] = 1
+    adherence.loc[adherence['espa']=='no', 'espa'] = 0
+    adherence.loc[adherence['cualitativo_ponderado']=='si', 'cualitativo_ponderado'] = 1
+    adherence.loc[adherence['cualitativo_ponderado']=='no', 'cualitativo_ponderado'] = 0
+    
+    adherence = adherence.sort_values(by=['id', 'fe_entrevista'])    
+    adherence_change = pd.DataFrame()
+    for paciente, df in adherence.groupby('id'):
+        temp_df = df.copy()
+        temp_df['morisky_change'] = temp_df['morisky_green'].diff()
+        temp_df['smaq1_change'] = temp_df['smaq1'].diff()
+        temp_df['smaq2_change'] = temp_df['smaq2'].diff()
+        temp_df['espa_change'] = temp_df['espa'].diff()
+        temp_df['nm_espa_change'] = temp_df['nm_espa'].diff()
+        temp_df['cualitativo_ponderado_change'] = temp_df['cualitativo_ponderado'].diff()
+        temp_df['cuantitativo_ponderado_change'] = temp_df['cuantitativo_ponderado'].diff()
+        adherence_change = adherence_change.append(temp_df, ignore_index=True)
+        
+    return (adherence, adherence_change)
 
 def get_hospitalizations_dataset():
     hospitalizations = pd.read_csv(HOSPITALIZATIONS)
