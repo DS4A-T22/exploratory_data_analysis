@@ -95,7 +95,7 @@ def get_dyspnea_dataset():
     # Tidying up dataframe (define categories explicitely and datetime fields if required) ...
     return dyspnea
 
-def get_emrgencies_dataset():
+def get_emergencies_dataset():
     emergencies = pd.read_csv(EMERGENCIES, sep='|') # -> TO DO: set the right delimiter (sep)
     # Tidying up dataframe (define categories explicitely and datetime fields if required) ...
     return emergencies
