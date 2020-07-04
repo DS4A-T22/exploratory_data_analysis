@@ -79,7 +79,39 @@ def get_adherence_dataset():
     adherence.loc[adherence['cualitativo_ponderado']=='si', 'cualitativo_ponderado'] = 1
     adherence.loc[adherence['cualitativo_ponderado']=='no', 'cualitativo_ponderado'] = 0
     
-    adherence = adherence.sort_values(by=['id', 'fe_entrevista'])    
+    adherence_s= adherence[adherence.cuantitativo_ponderado < 4]
+    adherence_n= adherence[adherence.cuantitativo_ponderado == 4]
+    Todos=adherence['id'].unique()                  #List of all of the ids.
+    id_list_s_not=adherence_s['id'].unique() #List of id's that are not 'siempre'
+    ads = adherence[~adherence['id'].isin(id_list_s_not)].copy()  #ads : Dataframe of id's that are always adherent.
+    id_list_n_not=adherence_n['id'].unique() #List of id's that are not 'nunca'
+    adn = adherence[~adherence['id'].isin(id_list_n_not)].copy()  #adn : Dataframe of id's that never were adherent.
+
+    Siempre_ad=ads['id'].unique()            #List of id's that are 'siempre'
+    Nunca_ad=adn['id'].unique()              #List of id's that are 'nunca'
+
+    Intermitentes = [x for x in Todos if x not in Siempre_ad]
+    Intermitentes = [x for x in Intermitentes if x not in Nunca_ad]
+    Intermitentes = np.array(Intermitentes)  #Intermitentes: list of id's that are 'Intermitent'
+
+    Todosmenosint=[x for x in Todos if x not in Intermitentes] 
+    Todosmenosint = np.array(Todosmenosint)  #List of id's that are 'Intermitent'
+
+    adi = adherence[~adherence['id'].isin(Todosmenosint)]  #adi: Dataframe of id's that has intermitent adherence.
+    middle_group_scores = adi.groupby('id').cuantitativo_ponderado.mean().reset_index()  #Sortearlo por el promedio.
+    intermediate_adherence_thresholds = adi.groupby('id').cuantitativo_ponderado.mean().quantile([0.25, 0.75])
+    scores_t75 = intermediate_adherence_thresholds[0.75]
+    scores_t25 = intermediate_adherence_thresholds[0.25]
+    middle_group_scores["categoria"] = np.where(middle_group_scores['cuantitativo_ponderado'] > scores_t75, 'A-', 
+    (np.where(middle_group_scores['cuantitativo_ponderado'] < scores_t25, 'N+', 'M')))
+    adi = adi.merge(middle_group_scores[['id', 'categoria']], how='left')
+    ads['categoria']='A'
+    adn['categoria']='N'
+    adherence = pd.concat([ads, adi, adn], ignore_index=True).sort_values(by=['id', 'fe_entrevista']).reset_index(drop=True)
+   
+    adherence['categoria'] = adherence['categoria'].astype('category')
+    adherence['categoria'].cat.reorder_categories(['N', 'N+', 'M', 'A-', 'A'], ordered=True, inplace=True)
+    
     adherence_change = pd.DataFrame()
     for paciente, df in adherence.groupby('id'):
         temp_df = df.copy()
@@ -91,7 +123,7 @@ def get_adherence_dataset():
         temp_df['cualitativo_ponderado_change'] = temp_df['cualitativo_ponderado'].diff()
         temp_df['cuantitativo_ponderado_change'] = temp_df['cuantitativo_ponderado'].diff()
         adherence_change = adherence_change.append(temp_df, ignore_index=True)
-        
+       
     return (adherence, adherence_change)
 
 def get_hospitalizations_dataset():
