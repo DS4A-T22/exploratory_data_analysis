@@ -142,11 +142,6 @@ def get_height_weight_dataset():
     # Tidying up dataframe (define categories explicitely and datetime fields if required) ...
     return height_weight
 
-def get_height_weight_dataset():
-    height_weight = pd.read_csv(HEIGHT_WEIGHT, sep='|') # -> TO DO: set the right delimiter (sep)
-    # Tidying up dataframe (define categories explicitely and datetime fields if required) ...
-    return height_weight
-
 def get_medical_treatments_dataset():
     med_treat = pd.read_csv(MEDICAL_TREATMENTS, sep='|') # -> TO DO: set the right delimiter (sep)
     # Tidying up dataframe (define categories explicitely and datetime fields if required) ...
