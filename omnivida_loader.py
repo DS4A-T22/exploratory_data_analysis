@@ -97,7 +97,8 @@ def get_adherence_dataset():
     Todosmenosint=[x for x in Todos if x not in Intermitentes] 
     Todosmenosint = np.array(Todosmenosint)  #List of id's that are 'Intermitent'
 
-    adi = adherence[~adherence['id'].isin(Todosmenosint)]  #adi: Dataframe of id's that has intermitent adherence.
+    adi = adherence[~adherence['id'].isin(Todosmenosint)].copy()  #adi: Dataframe of id's that has intermitent adherence.
+    adi['cuantitativo_ponderado'] = adi['cuantitativo_ponderado'].astype('int64')
     middle_group_scores = adi.groupby('id').cuantitativo_ponderado.mean().reset_index()  #Sortearlo por el promedio.
     intermediate_adherence_thresholds = adi.groupby('id').cuantitativo_ponderado.mean().quantile([0.25, 0.75])
     scores_t75 = intermediate_adherence_thresholds[0.75]
