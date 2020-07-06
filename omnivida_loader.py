@@ -123,6 +123,7 @@ def get_adherence_dataset():
         temp_df['nm_espa_change'] = temp_df['nm_espa'].diff()
         temp_df['cualitativo_ponderado_change'] = temp_df['cualitativo_ponderado'].diff()
         temp_df['cuantitativo_ponderado_change'] = temp_df['cuantitativo_ponderado'].diff()
+        temp_df['porcentaje_adherente'] = (temp_df[temp_df['cualitativo_ponderado']==1].shape[0]/float(temp_df.shape[0])) * 100 
         adherence_change = adherence_change.append(temp_df, ignore_index=True)
        
     return (adherence, adherence_change)
