@@ -115,7 +115,7 @@ def get_adherence_dataset():
     
     adherence_change = pd.DataFrame()
     for paciente, df in adherence.groupby('id'):
-        temp_df = df.copy()
+        temp_df = df.copy().reset_index(drop=True)
         temp_df['morisky_change'] = temp_df['morisky_green'].diff()
         temp_df['smaq1_change'] = temp_df['smaq1'].diff()
         temp_df['smaq2_change'] = temp_df['smaq2'].diff()
@@ -123,7 +123,8 @@ def get_adherence_dataset():
         temp_df['nm_espa_change'] = temp_df['nm_espa'].diff()
         temp_df['cualitativo_ponderado_change'] = temp_df['cualitativo_ponderado'].diff()
         temp_df['cuantitativo_ponderado_change'] = temp_df['cuantitativo_ponderado'].diff()
-        temp_df['porcentaje_adherente'] = (temp_df[temp_df['cualitativo_ponderado']==1].shape[0]/float(temp_df.shape[0])) * 100 
+        temp_df['dias_ultimo_control'] = temp_df['fe_entrevista'].diff() / np.timedelta64(1, 'D')
+        temp_df['historico_porcentaje_adherencia'] = round(100*(temp_df['cualitativo_ponderado'].cumsum()/(temp_df.index+1)),2)
         adherence_change = adherence_change.append(temp_df, ignore_index=True)
        
     return (adherence, adherence_change)
