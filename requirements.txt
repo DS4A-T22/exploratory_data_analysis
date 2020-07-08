@@ -1,0 +1,13 @@
+pandas
+numpy
+missingno
+branca
+curl
+folium
+geopandas
+seaborn
+shapely
+statsmodels
+scipy
+statsmodels
+pillow
