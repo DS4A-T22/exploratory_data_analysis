@@ -24,37 +24,37 @@ WELLBEING_INDEX = f'{DATASET_PATH}/calidad_de_vida.csv'
 def get_basic_info_dataset():
     basic_info = pd.read_csv(BASIC_DATA, sep='|')
     # set datatype and explicit category sorting for categorical data
-    basic_info['genero'] = basic_info['genero'].astype('category')
-    basic_info['escolaridad'] = basic_info['escolaridad'].astype('category')
-    basic_info['escolaridad'].cat.reorder_categories(['ANALFABETA', 'EDAD PREESCOLAR', 'PRIMARIA', \
-                                                    'SECUNDARIA', 'TECNICO', 'TECNOLOGO', 'UNIVERSITARIO', \
-                                                    'POSGRADO'], ordered=True, inplace=True)
-    basic_info['estado_civil'] = basic_info['estado_civil'].astype('category')
-    basic_info['zona'] = basic_info['zona'].astype('category')
-    basic_info['nivel_socioeconomico'] = basic_info['nivel_socioeconomico'].astype('category')
-    basic_info['nivel_socioeconomico'].cat.reorder_categories(['NIVEL 0 DEL SISBEN', 'NIVEL 1 DEL SISBEN', \
-                                                            'NIVEL 2 DEL SISBEN', 'A', 'B', 'C'], \
-                                                            ordered=True, inplace=True)
-    basic_info['ocupacion'] = basic_info['ocupacion'].astype('category')
-    basic_info['regimen'] = basic_info['regimen'].astype('category')
-    basic_info['tipo_afiliacion'] = basic_info['tipo_afiliacion'].astype('category')
-    basic_info['relacion_laboral'] = basic_info['relacion_laboral'].astype('category')
-    basic_info['fecha_nacimiento'] = pd.to_datetime(basic_info['fecha_nacimiento'])
+    basic_info['gender'] = basic_info['gender'].astype('category')
+    basic_info['education'] = basic_info['education'].astype('category')
+    basic_info['education'].cat.reorder_categories(['ANALFABETA', 'EDAD PREESCOLAR', 'PRIMARIA', \
+                                                      'SECUNDARIA', 'TECNICO', 'TECNOLOGO', 'UNIVERSITARIO', \
+                                                      'POSGRADO'], ordered=True, inplace=True)
+    basic_info['civil_status'] = basic_info['civil_status'].astype('category')
+    basic_info['zone'] = basic_info['zone'].astype('category')
+    basic_info['socioeconomic_level'] = basic_info['socioeconomic_level'].astype('category')
+    basic_info['socioeconomic_level'].cat.reorder_categories(['NIVEL 0 DEL SISBEN', 'NIVEL 1 DEL SISBEN', \
+                                                               'NIVEL 2 DEL SISBEN', 'A', 'B', 'C'], \
+                                                              ordered=True, inplace=True)
+    basic_info['occupation'] = basic_info['occupation'].astype('category')
+    basic_info['social_security_regime'] = basic_info['social_security_regime'].astype('category')
+    basic_info['social_security_affiliation_type'] = basic_info['social_security_affiliation_type'].astype('category')
+    basic_info['employment_type'] = basic_info['employment_type'].astype('category')
+    basic_info['birthdate'] = pd.to_datetime(basic_info['birthdate'])
     return basic_info
 
 def get_family_records_dataset():
     familiar_records = pd.read_csv(FAMILY_RECORD, sep='|')
     # set datatype and explicit category sorting for categorical data
-    familiar_records['eps'] = familiar_records['eps'].astype('category')
-    familiar_records['diagnostico'] = familiar_records['diagnostico'].astype('category')
-    familiar_records['cod_diagnostico'] = familiar_records['cod_diagnostico'].astype('category')
-    familiar_records['parentesco'] = familiar_records['parentesco'].astype('category')
+    familiar_records['health_provider'] = familiar_records['health_provider'].astype('category')
+    familiar_records['diagnosis'] = familiar_records['diagnosis'].astype('category')
+    familiar_records['diagnosis_code'] = familiar_records['diagnosis_code'].astype('category')
+    familiar_records['relationship'] = familiar_records['relationship'].astype('category')
     return familiar_records
 
 def get_wellbeing_index_dataset():
     life_quality = pd.read_csv(WELLBEING_INDEX, sep='|')
     # set datatype and explicit category sorting for categorical data
-    life_quality['dimensiones'] = life_quality['dimensiones'].astype('category')
+    life_quality['dimension'] = life_quality['dimension'].astype('category')
     return life_quality
 
 def get_adherence_dataset():
