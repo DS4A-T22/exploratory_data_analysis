@@ -124,6 +124,7 @@ def get_adherence_dataset():
         temp_df['cualitativo_ponderado_change'] = temp_df['cualitativo_ponderado'].diff()
         temp_df['cuantitativo_ponderado_change'] = temp_df['cuantitativo_ponderado'].diff()
         temp_df['dias_ultimo_control'] = temp_df['fe_entrevista'].diff() / np.timedelta64(1, 'D')
+        temp_df['num_reportes'] = temp_df.index + 1
         temp_df['historico_porcentaje_adherencia'] = round(100*(temp_df['cualitativo_ponderado'].cumsum()/(temp_df.index+1)),2)
         adherence_change = adherence_change.append(temp_df, ignore_index=True)
        
