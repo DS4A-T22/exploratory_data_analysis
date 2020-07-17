@@ -59,12 +59,12 @@ def get_wellbeing_index_dataset():
 
 def get_adherence_dataset():
     adherence = pd.read_csv(ADHERENCE)
-    adherence['fe_entrevista'] = pd.to_datetime(adherence['fe_entrevista'])
-    adherence.loc[adherence['cuantitativo_ponderado']=='<30%', 'cuantitativo_ponderado'] = 0
-    adherence.loc[adherence['cuantitativo_ponderado']=='30-65%', 'cuantitativo_ponderado'] = 1
-    adherence.loc[adherence['cuantitativo_ponderado']=='64-84%', 'cuantitativo_ponderado'] = 2
-    adherence.loc[adherence['cuantitativo_ponderado']=='85-94%', 'cuantitativo_ponderado'] = 3
-    adherence.loc[adherence['cuantitativo_ponderado']=='95-100%', 'cuantitativo_ponderado'] = 4
+    adherence['survey_date'] = pd.to_datetime(adherence['survey_date'])
+    adherence.loc[adherence['quantitative_result']=='<30%', 'quantitative_result'] = 0
+    adherence.loc[adherence['quantitative_result']=='30-65%', 'quantitative_result'] = 1
+    adherence.loc[adherence['quantitative_result']=='64-84%', 'quantitative_result'] = 2
+    adherence.loc[adherence['quantitative_result']=='85-94%', 'quantitative_result'] = 3
+    adherence.loc[adherence['quantitative_result']=='95-100%', 'quantitative_result'] = 4
     adherence.loc[adherence['smaq2']=='<30%', 'smaq2'] = 0
     adherence.loc[adherence['smaq2']=='30-65%', 'smaq2'] = 1
     adherence.loc[adherence['smaq2']=='64-84%', 'smaq2'] = 2
@@ -76,19 +76,19 @@ def get_adherence_dataset():
     adherence.loc[adherence['smaq1']=='no', 'smaq1'] = 0
     adherence.loc[adherence['espa']=='si', 'espa'] = 1
     adherence.loc[adherence['espa']=='no', 'espa'] = 0
-    adherence.loc[adherence['cualitativo_ponderado']=='si', 'cualitativo_ponderado'] = 1
-    adherence.loc[adherence['cualitativo_ponderado']=='no', 'cualitativo_ponderado'] = 0
+    adherence.loc[adherence['qualitative_result']=='si', 'qualitative_result'] = 1
+    adherence.loc[adherence['qualitative_result']=='no', 'qualitative_result'] = 0
     
-    adherence_s= adherence[adherence.cuantitativo_ponderado < 4]
-    adherence_n= adherence[adherence.cuantitativo_ponderado == 4]
-    Todos=adherence['id'].unique()                  #List of all of the ids.
-    id_list_s_not=adherence_s['id'].unique() #List of id's that are not 'siempre'
-    ads = adherence[~adherence['id'].isin(id_list_s_not)].copy()  #ads : Dataframe of id's that are always adherent.
-    id_list_n_not=adherence_n['id'].unique() #List of id's that are not 'nunca'
-    adn = adherence[~adherence['id'].isin(id_list_n_not)].copy()  #adn : Dataframe of id's that never were adherent.
+    adherence_s= adherence[adherence.quantitative_result < 4]
+    adherence_n= adherence[adherence.quantitative_result == 4]
+    Todos=adherence['id_patient'].unique()                  #List of all of the ids.
+    id_list_s_not=adherence_s['id_patient'].unique() #List of id's that are not 'siempre'
+    ads = adherence[~adherence['id_patient'].isin(id_list_s_not)].copy()  #ads : Dataframe of id's that are always adherent.
+    id_list_n_not=adherence_n['id_patient'].unique() #List of id's that are not 'nunca'
+    adn = adherence[~adherence['id_patient'].isin(id_list_n_not)].copy()  #adn : Dataframe of id's that never were adherent.
 
-    Siempre_ad=ads['id'].unique()            #List of id's that are 'siempre'
-    Nunca_ad=adn['id'].unique()              #List of id's that are 'nunca'
+    Siempre_ad=ads['id_patient'].unique()            #List of id's that are 'siempre'
+    Nunca_ad=adn['id_patient'].unique()              #List of id's that are 'nunca'
 
     Intermitentes = [x for x in Todos if x not in Siempre_ad]
     Intermitentes = [x for x in Intermitentes if x not in Nunca_ad]
@@ -97,50 +97,50 @@ def get_adherence_dataset():
     Todosmenosint=[x for x in Todos if x not in Intermitentes] 
     Todosmenosint = np.array(Todosmenosint)  #List of id's that are 'Intermitent'
 
-    adi = adherence[~adherence['id'].isin(Todosmenosint)].copy()  #adi: Dataframe of id's that has intermitent adherence.
-    adi['cuantitativo_ponderado'] = adi['cuantitativo_ponderado'].astype('int64')
-    middle_group_scores = adi.groupby('id').cuantitativo_ponderado.mean().reset_index()  #Sortearlo por el promedio.
-    intermediate_adherence_thresholds = adi.groupby('id').cuantitativo_ponderado.mean().quantile([0.25, 0.75])
+    adi = adherence[~adherence['id_patient'].isin(Todosmenosint)].copy()  #adi: Dataframe of id's that has intermitent adherence.
+    adi['quantitative_result'] = adi['quantitative_result'].astype('int64')
+    middle_group_scores = adi.groupby('id_patient').quantitative_result.mean().reset_index()  #Sortearlo por el promedio.
+    intermediate_adherence_thresholds = adi.groupby('id_patient').quantitative_result.mean().quantile([0.25, 0.75])
     scores_t75 = intermediate_adherence_thresholds[0.75]
     scores_t25 = intermediate_adherence_thresholds[0.25]
-    middle_group_scores["categoria"] = np.where(middle_group_scores['cuantitativo_ponderado'] > scores_t75, 'A-', 
-    (np.where(middle_group_scores['cuantitativo_ponderado'] < scores_t25, 'N+', 'M')))
-    adi = adi.merge(middle_group_scores[['id', 'categoria']], how='left')
-    ads['categoria']='A'
-    adn['categoria']='N'
-    adherence = pd.concat([ads, adi, adn], ignore_index=True).sort_values(by=['id', 'fe_entrevista']).reset_index(drop=True)
+    middle_group_scores["category"] = np.where(middle_group_scores['quantitative_result'] > scores_t75, 'A-', 
+    (np.where(middle_group_scores['quantitative_result'] < scores_t25, 'N+', 'M')))
+    adi = adi.merge(middle_group_scores[['id_patient', 'category']], how='left')
+    ads['category']='A'
+    adn['category']='N'
+    adherence = pd.concat([ads, adi, adn], ignore_index=True).sort_values(by=['id_patient', 'survey_date']).reset_index(drop=True)
    
-    adherence['categoria'] = adherence['categoria'].astype('category')
-    adherence['categoria'].cat.reorder_categories(['N', 'N+', 'M', 'A-', 'A'], ordered=True, inplace=True)
+    adherence['category'] = adherence['category'].astype('category')
+    adherence['category'].cat.reorder_categories(['N', 'N+', 'M', 'A-', 'A'], ordered=True, inplace=True)
     
     adherence_change = pd.DataFrame()
-    for paciente, df in adherence.groupby('id'):
+    for paciente, df in adherence.groupby('id_patient'):
         temp_df = df.copy().reset_index(drop=True)
         temp_df['morisky_change'] = temp_df['morisky_green'].diff()
         temp_df['smaq1_change'] = temp_df['smaq1'].diff()
         temp_df['smaq2_change'] = temp_df['smaq2'].diff()
         temp_df['espa_change'] = temp_df['espa'].diff()
         temp_df['nm_espa_change'] = temp_df['nm_espa'].diff()
-        temp_df['cualitativo_ponderado_change'] = temp_df['cualitativo_ponderado'].diff()
-        temp_df['cuantitativo_ponderado_change'] = temp_df['cuantitativo_ponderado'].diff()
-        temp_df['dias_ultimo_control'] = temp_df['fe_entrevista'].diff() / np.timedelta64(1, 'D')
-        temp_df['num_reportes'] = temp_df.index + 1
-        temp_df['historico_porcentaje_adherencia'] = round(100*(temp_df['cualitativo_ponderado'].cumsum()/(temp_df.index+1)),2)
+        temp_df['qualitative_result_change'] = temp_df['qualitative_result'].diff()
+        temp_df['quantitative_result_change'] = temp_df['quantitative_result'].diff()
+        temp_df['days_since_last_control'] = temp_df['survey_date'].diff() / np.timedelta64(1, 'D')
+        temp_df['num_reports'] = temp_df.index + 1
+        temp_df['ongoing_adherence_percentage'] = round(100*(temp_df['qualitative_result'].cumsum()/(temp_df.index+1)),2)
         adherence_change = adherence_change.append(temp_df, ignore_index=True)
        
     return (adherence, adherence_change)
 
 def get_hospitalizations_dataset():
     hospitalizations = pd.read_csv(HOSPITALIZATIONS)
-    hospitalizations['sexo'] = hospitalizations['sexo'].astype('category')
-    hospitalizations['cod_diagnostico'] = hospitalizations['cod_diagnostico'].astype('category')
+    hospitalizations['gender'] = hospitalizations['gender'].astype('category')
+    hospitalizations['diagnosis_code'] = hospitalizations['diagnosis_code'].astype('category')
     return hospitalizations
 
 def get_pathological_record_dataset():
     pathologics = pd.read_csv(PATHOLOGICAL_RECORD)
-    pathologics['fe_actualizada'] = pd.to_datetime(pathologics['fe_actualizada'])
-    pathologics['fe_inicio'] = pd.to_datetime(pathologics['fe_inicio'])
-    pathologics['fe_fin']=pd.to_datetime(pathologics['fe_fin'])
+    pathologics['update_date'] = pd.to_datetime(pathologics['update_date'])
+    pathologics['start_date'] = pd.to_datetime(pathologics['start_date'])
+    pathologics['end_date']=pd.to_datetime(pathologics['end_date'])
     return pathologics
 
 def get_act_dataset():
