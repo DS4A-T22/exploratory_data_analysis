@@ -125,11 +125,7 @@ def get_adherence_dataset():
         temp_df['quantitative_result_change'] = temp_df['quantitative_result'].diff()
         temp_df['days_since_last_control'] = temp_df['survey_date'].diff() / np.timedelta64(1, 'D')
         temp_df['num_reports'] = temp_df.index + 1
-<<<<<<< HEAD
         temp_df['ongoing_adherence_percentage'] = 100*(temp_df['qualitative_result'].cumsum()/(temp_df.index+1))
-=======
-        temp_df['ongoing_adherence_percentage'] = (100.*(temp_df['qualitative_result'].cumsum()/(temp_df.index+1))).astype(float)
->>>>>>> 9ee71eaa088047a1b18b29c6a1a56d4fed00c744
         adherence_change = adherence_change.append(temp_df, ignore_index=True)
        
     return (adherence, adherence_change)
