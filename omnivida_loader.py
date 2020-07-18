@@ -7,7 +7,7 @@ ACT_DISAG = f'{DATASET_PATH}/...'
 ADHERENCE = f'{DATASET_PATH}/Adher.csv' # -> TO DO: In the notebook use standard file name format and place file into the 'cleansed' directory
 BASIC_DATA = f'{DATASET_PATH}/datos_basicos.csv'
 BIO_MEDS = f'{DATASET_PATH}/...'
-DYSPNEA = f'{DATASET_PATH}/...'
+DYSPNEA = f'{DATASET_PATH}/disnea.csv'
 EMERGENCIES = f'{DATASET_PATH}/...'
 FAMILY_RECORD = f'{DATASET_PATH}/antecedentes_familiares.csv'
 HABITS = f'{DATASET_PATH}/...'
@@ -125,7 +125,7 @@ def get_adherence_dataset():
         temp_df['quantitative_result_change'] = temp_df['quantitative_result'].diff()
         temp_df['days_since_last_control'] = temp_df['survey_date'].diff() / np.timedelta64(1, 'D')
         temp_df['num_reports'] = temp_df.index + 1
-        temp_df['ongoing_adherence_percentage'] = round(100*(temp_df['qualitative_result'].cumsum()/(temp_df.index+1)),2)
+        temp_df['ongoing_adherence_percentage'] = 100*(temp_df['qualitative_result'].cumsum()/(temp_df.index+1))
         adherence_change = adherence_change.append(temp_df, ignore_index=True)
        
     return (adherence, adherence_change)
@@ -159,7 +159,7 @@ def get_bio_meds_dataset():
     return bio_meds
 
 def get_dyspnea_dataset():
-    dyspnea = pd.read_csv(DYSPNEA, sep='|') # -> TO DO: set the right delimiter (sep)
+    dyspnea = pd.read_csv(DYSPNEA, sep=',') # -> TO DO: set the right delimiter (sep)
     # Tidying up dataframe (define categories explicitely and datetime fields if required) ...
     return dyspnea
 
