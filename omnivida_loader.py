@@ -49,6 +49,7 @@ def get_family_records_dataset():
     familiar_records['diagnosis'] = familiar_records['diagnosis'].astype('category')
     familiar_records['diagnosis_code'] = familiar_records['diagnosis_code'].astype('category')
     familiar_records['relationship'] = familiar_records['relationship'].astype('category')
+    familiar_records['creation_date'] = pd.to_datetime(familiar_records['creation_date'])
     return familiar_records
 
 def get_wellbeing_index_dataset():
@@ -78,6 +79,13 @@ def get_adherence_dataset():
     adherence.loc[adherence['espa']=='no', 'espa'] = 0
     adherence.loc[adherence['qualitative_result']=='si', 'qualitative_result'] = 1
     adherence.loc[adherence['qualitative_result']=='no', 'qualitative_result'] = 0
+    adherence['smaq1'] = adherence['smaq1'].astype('float') 
+    adherence['smaq2'] = adherence['smaq2'].astype('float') 
+    adherence['morisky_green'] = adherence['morisky_green'].astype('float') 
+    adherence['espa'] = adherence['espa'].astype('float') 
+    adherence['nm_espa'] = adherence['nm_espa'].astype('float') 
+    adherence['qualitative_result'] = adherence['qualitative_result'].astype('float') 
+    adherence['quantitative_result'] = adherence['quantitative_result'].astype('float') 
     
     adherence_s= adherence[adherence.quantitative_result < 4]
     adherence_n= adherence[adherence.quantitative_result == 4]
