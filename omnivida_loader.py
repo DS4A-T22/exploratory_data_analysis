@@ -56,6 +56,7 @@ def get_wellbeing_index_dataset():
     life_quality = pd.read_csv(WELLBEING_INDEX, sep='|')
     # set datatype and explicit category sorting for categorical data
     life_quality['dimension'] = life_quality['dimension'].astype('category')
+    life_quality['creation_date'] = pd.to_datetime(life_quality['creation_date'])
     return life_quality
 
 def get_adherence_dataset():
