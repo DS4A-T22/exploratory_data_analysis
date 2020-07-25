@@ -5,14 +5,18 @@ def find_closest_date(df1_row, date_field_df1, df2, date_field_df2, filter_on='i
     deltas = np.abs(df2[df2[filter_on]==df1_row[filter_on]][date_field_df2] - df1_row[date_field_df1]).reset_index(drop=True)
     #print(f"\n\nADHERENCE ROW: \n{df1_row}")
     #print(f"\nDELTAS: \n{deltas}")
-    idx_closest_date = np.argmin(deltas)
-    #print(f"\nCLOSEST VALUE: \n{df2[df2[filter_on]==df1_row[filter_on]].iloc[idx_closest_date]}")
-    closest_date = df2[df2[filter_on]==df1_row[filter_on]].iloc[idx_closest_date][date_field_df2]
-    res = {"closest_date": closest_date}
-    idx = ['closest_date']
-    if add_time_delta_column:
-        res["closest_delta"] = (deltas[idx_closest_date] / np.timedelta64(1, 'D')) * (-1.0 if closest_date > df1_row[date_field_df1] else 1.0)
-        idx.append('closest_delta')
+    if not deltas.empty:
+        idx_closest_date = np.argmin(deltas)
+        #print(f"\nCLOSEST VALUE: \n{df2[df2[filter_on]==df1_row[filter_on]].iloc[idx_closest_date]}")
+        closest_date = df2[df2[filter_on]==df1_row[filter_on]].iloc[idx_closest_date][date_field_df2]
+        res = {"closest_date": closest_date}
+        idx = ['closest_date']
+        if add_time_delta_column:
+            res["closest_delta"] = (deltas[idx_closest_date] / np.timedelta64(1, 'D')) * (-1.0 if closest_date > df1_row[date_field_df1] else 1.0)
+            idx.append('closest_delta')
+    else: 
+        res = {"closest_date": np.nan, "closest_delta": np.nan}
+        idx = ['closest_date', 'closest_delta']
     return pd.Series(res, index=idx)
 
 def merge_on_closest_date(df1, df2, date_field_df1, date_field_df2, merge_on='id_patient'):
