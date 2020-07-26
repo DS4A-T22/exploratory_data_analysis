@@ -32,3 +32,15 @@ def merge_on_closest_date(df1, df2, date_field_df1, date_field_df2, merge_on='id
     
     result_df = pd.merge(temp_df1, df2, left_on=[merge_on, f'closest_{date_field_df2}'], right_on=[merge_on, date_field_df2])
     return result_df.drop(columns=f'closest_{date_field_df2}', axis=1)
+
+def compute_transition_probabilitites(df):
+    pos_transition = df[df['qualitative_result_change']==1]
+    neg_transition = df[df['qualitative_result_change']==-1]
+    num_pos_transitions = len(pos_transition)
+    num_neg_transitions = len(neg_transition)
+    num_no_trans_no_adherent = len(df[(df['qualitative_result'] == 0) & (df['qualitative_result_change'] == 0)])
+    num_no_trans_adherent = len(df[(df['qualitative_result'] == 1) & (df['qualitative_result_change'] == 0)])
+    pat = num_pos_transitions / (num_pos_transitions + num_no_trans_no_adherent)
+    pnt = num_neg_transitions / (num_neg_transitions + num_no_trans_adherent)
+    pt = (num_pos_transitions + num_neg_transitions) / (num_neg_transitions + num_no_trans_adherent + num_pos_transitions + num_no_trans_no_adherent)
+    return [pat, pnt, pt]
