@@ -24,8 +24,9 @@ def find_closest_date(df1_row, date_field_df1, df2, date_field_df2, filter_on='i
 
 def merge_on_closest_date(df1, df2, date_field_df1, date_field_df2, merge_on='id_patient'):
     temp_df1 = df1.copy()
-    df2[date_field_df2]=pd.to_datetime(df2[date_field_df2])
-    df1[date_field_df1]=pd.to_datetime(df1[date_field_df1])
+    if df2[date_field_df2].dtype == 'object':
+        df2[date_field_df2]=pd.to_datetime(df2[date_field_df2])
+    temp_df1[date_field_df1]=pd.to_datetime(df1[date_field_df1])
     temp_df1[[f'closest_{date_field_df2}', f'days_since_{date_field_df2}']] = temp_df1.apply(
                                           find_closest_date, args=[date_field_df1, df2, date_field_df2, merge_on], axis=1)
     
