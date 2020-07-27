@@ -1,7 +1,8 @@
 import pandas as pd
 import numpy as np
+import os
 
-DATASET_PATH = './data/cleansed'
+DATASET_PATH = os.path.abspath('../exploratory_data_analysis/data/cleansed')
 ACT = f'{DATASET_PATH}/...'
 ACT_DISAG = f'{DATASET_PATH}/...'
 ADHERENCE = f'{DATASET_PATH}/Adher.csv' # -> TO DO: In the notebook use standard file name format and place file into the 'cleansed' directory
