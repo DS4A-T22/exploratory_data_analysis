@@ -11,7 +11,7 @@ ADHERENCE = f'{DATASET_PATH}/Adher.csv' # -> TO DO: In the notebook use standard
 BASIC_DATA = f'{DATASET_PATH}/datos_basicos.csv'
 BIO_MEDS = f'{DATASET_PATH}/...'
 DYSPNEA = f'{DATASET_PATH}/disnea.csv'
-EMERGENCIES = f'{DATASET_PATH}/...'
+EMERGENCIES = f'{DATASET_PATH}/emergencies.csv'
 FAMILY_RECORD = f'{DATASET_PATH}/antecedentes_familiares.csv'
 HABITS = f'{DATASET_PATH}/...'
 HEIGHT_WEIGHT = f'{DATASET_PATH}/...'
@@ -138,6 +138,7 @@ def get_adherence_dataset():
         temp_df['days_since_last_control'] = temp_df['survey_date'].diff() / np.timedelta64(1, 'D')
         temp_df['num_reports'] = temp_df.index + 1
         temp_df['ongoing_adherence_percentage'] = 100*(temp_df['qualitative_result'].cumsum()/(temp_df.index+1))
+        # temp_df['ongoing_adherence_percentage'] = temp_df['ongoing_adherence_percentage'].shift(periods=1)#, fill_value=0)
         adherence_change = adherence_change.append(temp_df, ignore_index=True)
        
     return (adherence, adherence_change)
@@ -152,7 +153,7 @@ def get_pathological_record_dataset():
     pathologics = pd.read_csv(PATHOLOGICAL_RECORD)
     pathologics['update_date'] = pd.to_datetime(pathologics['update_date'])
     pathologics['start_date'] = pd.to_datetime(pathologics['start_date'])
-    pathologics['end_date']=pd.to_datetime(pathologics['end_date'])
+    # pathologics['end_date']=pd.to_datetime(pathologics['end_date'])
     return pathologics
 
 def get_act_dataset():
@@ -179,7 +180,7 @@ def get_dyspnea_dataset():
     return dyspnea_test
 
 def get_emergencies_dataset():
-    emergencies = pd.read_csv(EMERGENCIES, sep='|') # -> TO DO: set the right delimiter (sep)
+    emergencies = pd.read_csv(EMERGENCIES) # -> TO DO: set the right delimiter (sep)
     # Tidying up dataframe (define categories explicitely and datetime fields if required) ...
     return emergencies
 
