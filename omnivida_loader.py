@@ -5,8 +5,8 @@ from pathlib import Path
 
 # DATASET_PATH = os.path.abspath('../exploratory_data_analysis/data/cleansed')
 DATASET_PATH = Path(__file__).parent / "./data/cleansed"
-ACT = f'{DATASET_PATH}/...'
-ACT_DISAG = f'{DATASET_PATH}/...'
+ACT = f'{DATASET_PATH}/act.csv'
+ACT_DISAG = f'{DATASET_PATH}/act_desagregado.csv'
 ADHERENCE = f'{DATASET_PATH}/Adher.csv' # -> TO DO: In the notebook use standard file name format and place file into the 'cleansed' directory
 BASIC_DATA = f'{DATASET_PATH}/datos_basicos.csv'
 BIO_MEDS = f'{DATASET_PATH}/...'
@@ -157,11 +157,13 @@ def get_pathological_record_dataset():
 
 def get_act_dataset():
     act = pd.read_csv(ACT)
+    act['date_result'] = pd.to_datetime(act['date_result'])
     # Tidying up dataframe (define categories explicitely and datetime fields if required) ...
     return act
 
 def get_act_disag_dataset():
     act_disag = pd.read_csv(ACT_DISAG)
+    act_disag['result_date'] = pd.to_datetime(act_disag['result_date'])
     # Tidying up dataframe (define categories explicitely and datetime fields if required) ...
     return act_disag
 
@@ -171,9 +173,10 @@ def get_bio_meds_dataset():
     return bio_meds
 
 def get_dyspnea_dataset():
-    dyspnea = pd.read_csv(DYSPNEA, sep=',') # -> TO DO: set the right delimiter (sep)
-    # Tidying up dataframe (define categories explicitely and datetime fields if required) ...
-    return dyspnea
+    dyspnea_test = pd.read_csv(DYSPNEA) # -> TO DO: set the right delimiter (sep)
+    dyspnea_test['discharge_date'] = pd.to_datetime(dyspnea_test['discharge_date'])
+     # Tidying up dataframe (define categories explicitely and datetime fields if required) ...
+    return dyspnea_test
 
 def get_emergencies_dataset():
     emergencies = pd.read_csv(EMERGENCIES, sep='|') # -> TO DO: set the right delimiter (sep)
