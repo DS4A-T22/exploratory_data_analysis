@@ -21,7 +21,7 @@ MEDS_COLLECTING_ISSUES = f'{DATASET_PATH}/...'
 PARACLINICAL = f'{DATASET_PATH}/...'
 PATHOLOGICAL_RECORD = f'{DATASET_PATH}/Pato.csv' # -> TO DO: In the notebook use standard file name format and place file into the 'cleansed' directory
 PHARMA_VIGILANCE = f'{DATASET_PATH}/...'
-VACCINATION = f'{DATASET_PATH}/...'
+VACCINATION = f'{DATASET_PATH}/vacunacion.csv'
 WELLBEING_INDEX = f'{DATASET_PATH}/calidad_de_vida.csv'
 
 def get_basic_info_dataset():
@@ -236,7 +236,8 @@ def get_pharma_vigilance_dataset():
     return pharma_vigilance
 
 def get_vaccination_dataset():
-    vaccination = pd.read_csv(VACCINATION, sep='|') # -> TO DO: set the right delimiter (sep)
+    vaccination = pd.read_csv(VACCINATION) # -> TO DO: set the right delimiter (sep)
+    vaccination['emission_date'] = pd.to_datetime(vaccination['emission_date'])
     # Tidying up dataframe (define categories explicitely and datetime fields if required) ...
     return vaccination
 
