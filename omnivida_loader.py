@@ -170,6 +170,20 @@ def get_act_disag_dataset():
 
 def get_bio_meds_dataset():
     bio_meds = pd.read_csv(BIO_MEDS, sep='|') # -> TO DO: set the right delimiter (sep)
+    bio_meds['id_patient'] = bio_meds['id_patient'].astype('str')
+    bio_meds['record_date'] = pd.to_datetime(bio_meds['record_date'])
+    bio_meds.loc[bio_meds['product_name'] == 'OMALIZUMAB 150 MG POLV INY (XOLAIR)-21755-4896', 'product_name'] = 0
+    bio_meds.loc[bio_meds['product_name'] == 'OMALIZUMAB SOLUCIÓN INYECTABLE 150MG /1ML (XOLAIR)-29140', 'product_name'] = 1
+    bio_meds.loc[bio_meds['product_name'] == 'OMALIZUMAB SOLUCIÓN INYECTABLE 75MG /0.5ML (XOLAIR) -29157', 'product_name'] = 2
+    bio_meds.loc[bio_meds['product_name'] == 'BENRALIZUMAB 30MG JERINGA PRELLENA (FASENRA) -29551', 'product_name'] = 3
+    bio_meds.loc[bio_meds['product_name'] == 'MEPOLIZUMAB POLVO INYECTABLE 100MG (NUCALA) -29631', 'product_name'] = 4
+    bio_meds.loc[bio_meds['product_name'] == 'DUPILUMAB 200MG/1.14 ML JERINGA PRELLENA (DUPIXENT) -29751', 'product_name'] = 5
+    bio_meds.loc[bio_meds['generic_name'] == 'OMALIZUMAB','generic_name'] = 0
+    bio_meds.loc[bio_meds['generic_name'] == 'BENRALIZUMAB','generic_name'] = 1
+    bio_meds.loc[bio_meds['generic_name'] == 'MEPOLIZUMAB','generic_name'] = 2
+    bio_meds.loc[bio_meds['generic_name'] == 'DUPILUMAB','generic_name'] = 3
+    bio_meds['product_name'] = bio_meds['product_name'].astype('category')
+    bio_meds['generic_name'] = bio_meds['generic_name'].astype('category') # -> TO DO: set the right delimiter (sep)
     # Tidying up dataframe (define categories explicitely and datetime fields if required) ...
     return bio_meds
 
@@ -180,9 +194,11 @@ def get_dyspnea_dataset():
     return dyspnea_test
 
 def get_emergencies_dataset():
-    emergencies = pd.read_csv(EMERGENCIES) # -> TO DO: set the right delimiter (sep)
+    med_treat = pd.read_csv(MEDICAL_TREATMENTS, sep='|') # -> TO DO: set the right delimiter (se
+    med_treat['id_patient'] =  med_treat['id_patient'].astype('str')
+    med_treat['released_date']=pd.to_datetime(med_treat['released_date'])
     # Tidying up dataframe (define categories explicitely and datetime fields if required) ...
-    return emergencies
+    return med_treat
 
 def get_habits_dataset():
     habits = pd.read_csv(HABITS, sep='|') # -> TO DO: set the right delimiter (sep)
@@ -201,7 +217,12 @@ def get_medical_treatments_dataset():
 
 def get_med_collec_issues_dataset():
     med_collec_issues = pd.read_csv(MEDS_COLLECTING_ISSUES, sep='|') # -> TO DO: set the right delimiter (sep)
-    # Tidying up dataframe (define categories explicitely and datetime fields if required) ...
+    med_collec_issues['id_patient'] = med_collec_issues['id_patient'].astype('str')
+    med_collec_issues.loc[med_collec_issues['novelty_type'] == 'INCONSISTENCIAS EN LA RECLAMACION', 'novelty_type'] = 1
+    med_collec_issues.loc[med_collec_issues['novelty_type'] == 'NUEVO INCONSISTENTE', 'novelty_type'] = 0
+    med_collec_issues['novelty_type'].astype('category')
+    med_collec_issues['register_date'] = pd.to_datetime(med_collec_issues['register_date'])
+    # Tidying up dataframe (define categories explicitely and datetime fields if required) 
     return med_collec_issues
 
 def get_paraclinical_dataset():
