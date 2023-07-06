@@ -8,7 +8,7 @@ geopandas
 seaborn
 shapely
 statsmodels
-scipy==1.2
+scipy==1.10.0
 statsmodels
 pillow
 Faker
